@@ -2,6 +2,15 @@ name = "audioinsight"
 compatibility_date = "2024-04-05"
 compatibility_flags = ["nodejs_compat"]
 
+[ai]
+binding = "AI"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "db-d1-audioinsight"
+database_id = "d5a185a7-aff8-40c8-bbc0-fc72d62683ec"
+
+
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
 # Docs: https://developers.cloudflare.com/pages/functions/bindings/#environment-variables
