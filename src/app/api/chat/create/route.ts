@@ -2,11 +2,16 @@ import type { NextRequest } from 'next/server'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { v4 as uuidv4 } from 'uuid';
 import { Ai } from '@cloudflare/ai';
+import { DatabaseController } from '@/database/DatabaseController';
 
 export const runtime = 'edge'
+const dbController = DatabaseController.getInstance();
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
+
+  const { DB: db } = getRequestContext().env;
+  
   const audio = formData.get('audio') as File;
 
   if (!audio) {
@@ -16,7 +21,6 @@ export async function POST(request: NextRequest) {
   }
 
   const ai = new Ai(getRequestContext().env.AI);
-
 
   const buffer = await audio.arrayBuffer();
   const bytes = new Uint8Array(buffer);
@@ -45,12 +49,19 @@ export async function POST(request: NextRequest) {
 
     const id = uuidv4().substring(0, 32);
 
-    const stmt = getRequestContext().env.DB.prepare(`INSERT INTO chats (id, content, vtt, title) VALUES (?, ?, ?, ?)`);
-    const response = await stmt.bind(id, text, vtt, title).run();
+    const chat = await dbController.createChat(db, {
+      id,
+      content: text,
+      vtt,
+      title
+    });
 
-    if (response.success) {
-      const chatHistoryStmt = getRequestContext().env.DB.prepare(`INSERT INTO chat_messages (chat_id, role, content) VALUES (?, ?, ?)`);
-      chatHistoryStmt.bind(id, 'assistance', summarizationResponse.summary).run();
+    if (chat.success) {
+      dbController.addChatMessage(db, {
+        chatId: id,
+        content: summarizationResponse.summary,
+        role: 'assistance',
+      });
 
       return new Response(JSON.stringify({
         id,

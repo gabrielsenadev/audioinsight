@@ -1,15 +1,19 @@
 import type { NextRequest } from 'next/server'
 import { getRequestContext } from '@cloudflare/next-on-pages'
-import { v4 as uuidv4 } from 'uuid';
 import { Ai } from '@cloudflare/ai';
-import { RoleScopedChatInput } from '@cloudflare/ai/dist/ai/tasks/text-generation';
+import { DatabaseController } from '@/database/DatabaseController';
 
 export const runtime = 'edge'
+const dbController = DatabaseController.getInstance();
 
 type SendMessageRequest = {
   chatId: number;
   message: string;
 }
+
+type Params = {
+  chatId: string;
+};
 
 export async function POST(request: NextRequest, context: { params: Params }) {
   const id = context.params.chatId;
@@ -20,14 +24,11 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     });
   }
   const { message } = data;
-  const stmt = getRequestContext().env.DB.prepare(`
-    SELECT * FROM chats
-    WHERE id=?
-  `);
+  const { DB: db } = getRequestContext().env;
 
-  const result = await stmt.bind(id).first();
+  const chat = await dbController.getChat(db, id);
 
-  if (!result) {
+  if (!chat) {
     return new Response('Chat not found.', {
       status: 404,
     });
@@ -35,12 +36,8 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const ai = new Ai(getRequestContext().env.AI);
 
-  const chatHistoryStmt = getRequestContext().env.DB.prepare(`
-    SELECT role, content FROM chat_messages
-    WHERE chat_id=?
-  `);
+  const firstChatMessage = await dbController.getFirstChatMessage(db, id);
 
-  const resultHistory = await chatHistoryStmt.bind(id).first() as { role: string, content: string };
   const messages = [
     {
       role: 'system',
@@ -48,16 +45,18 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     },
     {
       role: 'system',
-      content: `Context:${result.vtt}`
+      content: `Context:${chat.vtt}`
     },
-    resultHistory,
-    {
-      role: 'user',
-      content: message,
-    }
   ];
 
-  console.log('dt', messages);
+  if (firstChatMessage) {
+    messages.push(firstChatMessage);
+  }
+
+  messages.push({
+    role: 'user',
+    content: message,
+  });
 
   const chatBotResponse = (await ai.run(
     "@cf/meta/llama-2-7b-chat-fp16",
@@ -66,16 +65,27 @@ export async function POST(request: NextRequest, context: { params: Params }) {
     }
   )) as { response: string };
 
-  const addChatHistoryStmt = getRequestContext().env.DB.prepare(`INSERT INTO chat_messages (chat_id, role, content) VALUES (?, ?, ?)`);
-  addChatHistoryStmt.bind(id, 'user', message).run();
-  addChatHistoryStmt.bind(id, 'assistance', chatBotResponse.response).run();
+  const aiResponseMessage = {
+    chatId: id,
+    content: chatBotResponse.response,
+    role: 'assistance',
+  };
+
+  dbController.addChatMessages(db, [
+    {
+      chatId: id,
+      content: message,
+      role: 'user',
+    },
+    aiResponseMessage,
+  ])
 
   return new Response(JSON.stringify({
-    role: 'assistance',
-    message: chatBotResponse.response,
+    role: aiResponseMessage.role,
+    message: aiResponseMessage.content,
   }), {
     status: 200,
-  })
+  });
 }
 
 export async function GET(request: NextRequest, context: { params: Params }) {
@@ -86,32 +96,24 @@ export async function GET(request: NextRequest, context: { params: Params }) {
     });
   }
 
-  const stmt = getRequestContext().env.DB.prepare(`
-    SELECT * FROM chats
-    WHERE id=?
-  `);
+  const { DB: db } = getRequestContext().env;
 
-  const result = await stmt.bind(id).first();
+  const chat = await dbController.getChat(db, id);
 
-  if (!result) {
+  if (!chat) {
     return new Response('Chat not found.', {
       status: 404,
     });
   }
 
-  const chatHistoryStmt = getRequestContext().env.DB.prepare(`
-    SELECT role, content FROM chat_messages
-    WHERE chat_id=?
-  `);
-
-  const resultHistory = await chatHistoryStmt.bind(id).all();
+  const chatMessages = (await dbController.getChatMessages(db, id)).results ?? [];
 
   return new Response(JSON.stringify({
     id,
-    title: result.title,
-    vtt: result.vtt,
-    content: result.content,
-    messages: resultHistory.results ?? [],
+    title: chat.title,
+    vtt: chat.vtt,
+    content: chat.content,
+    messages: chatMessages,
   }), {
     status: 200,
   })
