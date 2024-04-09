@@ -10,7 +10,8 @@
     "pages:build": "npx @cloudflare/next-on-pages",
     "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
     "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
-    "build-cf-types": "wrangler types --env-interface CloudflareEnv env.d.ts"
+    "build-cf-types": "wrangler types --env-interface CloudflareEnv env.d.ts",
+    "build-db": "wrangler d1 execute db-d1-audioinsight --local --file=./src/database/schema.sql"
   },
   "dependencies": {
     "next": "14.1.0",

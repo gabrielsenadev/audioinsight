@@ -33,24 +33,36 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    const titleResponse = (await ai.run(
+      "@cf/meta/llama-2-7b-chat-fp16",
+      {
+        prompt: `<s>[INST]<<SYS>>Generate a title of the user content. Only one.<</SYS>>${summarizationResponse.summary}[/INST]</s>`,
+        raw: true,
+      }
+    )) as { response: string };
+
+    const title = titleResponse.response.replaceAll('"', '').replace('titled', '').trim();
+
     const id = uuidv4().substring(0, 32);
 
-    const stmt = getRequestContext().env.DB.prepare(`INSERT INTO chats (id, context, summary) VALUES (?, ?, ?)`);
-    const response = await stmt.bind(id, vtt, summarizationResponse.summary).run();
+    const stmt = getRequestContext().env.DB.prepare(`INSERT INTO chats (id, content, vtt, title) VALUES (?, ?, ?, ?)`);
+    const response = await stmt.bind(id, text, vtt, title).run();
 
     if (response.success) {
-      const chatHistoryStmt = getRequestContext().env.DB.prepare(`INSERT INTO chat_messages (chat_id, role, message) VALUES (?, ?, ?)`);
+      const chatHistoryStmt = getRequestContext().env.DB.prepare(`INSERT INTO chat_messages (chat_id, role, content) VALUES (?, ?, ?)`);
       chatHistoryStmt.bind(id, 'assistance', summarizationResponse.summary).run();
 
       return new Response(JSON.stringify({
-        chatId: id,
-        transcribedAudio: text,
+        id,
+        title,
+        vtt,
+        content: text,
         messages: [
           {
             role: 'assistance',
             message: summarizationResponse.summary,
           },
-        ]
+        ],
       }), {
         status: 200,
       })
