@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { Ai } from '@cloudflare/ai';
 import { DatabaseController } from '@/database/DatabaseController';
+import { contextTextGeneration } from '@/ai';
 
 export const runtime = 'edge'
 const dbController = DatabaseController.getInstance();
@@ -18,6 +19,7 @@ type Params = {
 export async function POST(request: NextRequest, context: { params: Params }) {
   const id = context.params.chatId;
   const data = await request.json<SendMessageRequest>();
+
   if (!data?.message) {
     return new Response('Bad Request.', {
       status: 400,
@@ -36,40 +38,8 @@ export async function POST(request: NextRequest, context: { params: Params }) {
 
   const ai = new Ai(getRequestContext().env.AI);
 
-  const firstChatMessage = await dbController.getFirstChatMessage(db, id);
-
-  const messages = [
-    {
-      role: 'system',
-      content: 'When answering the question or responding, use the context provided.'
-    },
-    {
-      role: 'system',
-      content: `Context:${chat.vtt}`
-    },
-  ];
-
-  if (firstChatMessage) {
-    messages.push(firstChatMessage);
-  }
-
-  messages.push({
-    role: 'user',
-    content: message,
-  });
-
-  const chatBotResponse = (await ai.run(
-    "@cf/meta/llama-2-7b-chat-fp16",
-    {
-      messages,
-    }
-  )) as { response: string };
-
-  const aiResponseMessage = {
-    chatId: id,
-    content: chatBotResponse.response,
-    role: 'assistance',
-  };
+  const firstChatMessage = (await dbController.getFirstChatMessage(db, id)) ?? { role: 'assistant', content: ' '};
+  const { response: content } = (await contextTextGeneration(ai, message, chat.vtt, [firstChatMessage])) as { response: string };
 
   dbController.addChatMessages(db, [
     {
@@ -77,15 +47,17 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       content: message,
       role: 'user',
     },
-    aiResponseMessage,
+    {
+      chatId: id,
+      content,
+      role: 'assistance',
+    },
   ])
-
+ 
   return new Response(JSON.stringify({
-    role: aiResponseMessage.role,
-    message: aiResponseMessage.content,
-  }), {
-    status: 200,
-  });
+    role: 'assistance',
+    content: content,
+  }));
 }
 
 export async function GET(request: NextRequest, context: { params: Params }) {
