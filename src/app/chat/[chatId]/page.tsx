@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 export default function Home() {
   return (
     <main className="bg-[#111111] h-full justify-center flex p-2 flex-col items-center">

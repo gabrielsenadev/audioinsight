@@ -4,7 +4,7 @@ import { Ai } from '@cloudflare/ai';
 import { DatabaseController } from '@/database/DatabaseController';
 import { contextTextGeneration } from '@/ai';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 const dbController = DatabaseController.getInstance();
 
 type SendMessageRequest = {
