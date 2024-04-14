@@ -1,87 +1,96 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`c3`](https://developers.cloudflare.com/pages/get-started/c3).
+# AudioInsight - Cloudflare AI Challenge Entry
 
-## Getting Started
+AudioInsight processes audio, transcribes it, summarizes it, generates a title for the content, and allows users to ask questions about the related audio.
 
-First, run the development server:
+This is an entry for the [Cloudflare AI Challenge](https://dev.to/challenges/cloudflare).
+
+Live on: [https://audioinsight-4on.pages.dev](https://audioinsight-4on.pages.dev)
+
+- [How It Works](#how-it-works)
+- [How to Install](#how-to-install)
+- [Audio Examples](#audio-examples)
+- [Screenshots](#screenshots)
+
+## How It Works
+
+1. On the application's homepage, the user uploads an audio file.
+2. We use the [whisper model](https://developers.cloudflare.com/workers-ai/models/whisper/) to transcribe the audio into text.
+3. We use the [neural-chat-7b-v3-1-awq model](https://developers.cloudflare.com/workers-ai/models/neural-chat-7b-v3-1-awq/) to generate a title based on the provided content.
+4. We summarize the content with the [bart-large-cnn model](https://developers.cloudflare.com/workers-ai/models/bart-large-cnn/).
+5. After that, the user can ask questions, and we use the [neural-chat-7b-v3-1-awq model](https://developers.cloudflare.com/workers-ai/models/neural-chat-7b-v3-1-awq/) to answer the user's questions.
+
+### Under the Hood
+
+- [D1 Database](https://developers.cloudflare.com/d1/) is responsible for storing chat and its history.
+- The [Cloudflare R2](https://developers.cloudflare.com/r2/) is responsible for storing chat's audio files.
+- [Cloudflare Pages](https://developers.cloudflare.com/pages/) is responsible for hosting the entire [NextJS](https://nextjs.org/) application, which provides a front-end and back-end ecosystem.
+
+## How to Install
+
+1. Start by cloning this repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone git@github.com:gabrielsenadev/audioinsight.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-## Cloudflare integration
+```bash
+npm ci
+```
 
-Besides the `dev` script mentioned above `c3` has added a few extra scripts that allow you to integrate the application with the [Cloudflare Pages](https://pages.cloudflare.com/) environment, these are:
-  - `pages:build` to build the application for Pages using the [`@cloudflare/next-on-pages`](https://github.com/cloudflare/next-on-pages) CLI
-  - `preview` to locally preview your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
-  - `deploy` to deploy your Pages application using the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI
+3. Create D1 Database:
 
-> __Note:__ while the `dev` script is optimal for local development you should preview your Pages application as well (periodically or before deployments) in order to make sure that it can properly work in the Pages environment (for more details see the [`@cloudflare/next-on-pages` recommended workflow](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md#recommended-workflow))
-
-### Bindings
-
-Cloudflare [Bindings](https://developers.cloudflare.com/pages/functions/bindings/) are what allows you to interact with resources available in the Cloudflare Platform.
-
-You can use bindings during development, when previewing locally your application and of course in the deployed application:
-
-- To use bindings in dev mode you need to define them in the `next.config.js` file under `setupDevBindings`, this mode uses the `next-dev` `@cloudflare/next-on-pages` submodule. For more details see its [documentation](https://github.com/cloudflare/next-on-pages/blob/05b6256/internal-packages/next-dev/README.md).
-
-- To use bindings in the preview mode you need to add them to the `pages:preview` script accordingly to the `wrangler pages dev` command. For more details see its [documentation](https://developers.cloudflare.com/workers/wrangler/commands/#dev-1) or the [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
-
-- To use bindings in the deployed application you will need to configure them in the Cloudflare [dashboard](https://dash.cloudflare.com/). For more details see the  [Pages Bindings documentation](https://developers.cloudflare.com/pages/functions/bindings/).
-
-#### KV Example
-
-`c3` has added for you an example showing how you can use a KV binding.
-
-In order to enable the example:
-- Search for javascript/typescript lines containing the following comment:
-  ```ts
-  // KV Example:
-  ```
-  and uncomment the commented lines below it.
-- Do the same in the `wrangler.toml` file, where
-  the comment is:
-  ```
-  # KV Example:
-  ```
-- If you're using TypeScript run the `build-cf-types` script to update the `env.d.ts` file:
-  ```bash
-  npm run build-cf-types
-  # or
-  yarn build-cf-types
-  # or
-  pnpm build-cf-types
-  # or
-  bun build-cf-types
-  ```
-
-After doing this you can run the `dev` or `preview` script and visit the `/api/hello` route to see the example in action.
-
-Finally, if you also want to see the example work in the deployed application make sure to add a `MY_KV_NAMESPACE` binding to your Pages application in its [dashboard kv bindings settings section](https://dash.cloudflare.com/?to=/:account/pages/view/:pages-project/settings/functions#kv_namespace_bindings_section). After having configured it make sure to re-deploy your application.
-
----
-
-# Setup
+```bash
 npx wrangler d1 create db-d1-audioinsight
+```
 
-# Setup
-1. Clone this repo;
-3. Install dependencies;
-3. Create d1 database;
-npx wrangler d1 create db-d1-audioinsight
-3. Update on wrangler.toml, in section d1_databases, your database_id
-4. Up database schema
+4. Configure your database:
+
+```bash
 npx wrangler d1 execute db-d1-audioinsight --remote --file=./src/database/schema.sql
-5. Create your R2 bucket and update bucket_name on wrangler.toml
-6. Deploy the application
+```
+
+5. Create your R2 bucket:
+
+```bash
+npx wrangler r2 bucket create r2-audios
+```
+
+6. Update wrangler.toml to target your recently created database and bucket properly:
+
+```toml
+[[d1_databases]]
+binding = "DB"
+database_name = "db-d1-audioinsight"
+database_id = "d485c019-8021-4d08-88e6-e5a6ea66ad4e"
+
+[[r2_buckets]]
+binding = 'R2'
+bucket_name = 'r2-audios'
+```
+
+7. Run preview:
+
+```bash
+npm run preview
+```
+
+8. Deploy the application:
+
+
+```bash
 npm run deploy
-7. When running this command, you will be asked to create a new project or select a project. Choose one.
-8. On your project settings, set the compatibility flags to nodejs_compat, both preview and production
+```
+
+## Audio Examples
+
+In the examples/ directory, there are some useful audios to try this application.
+
+## Screenshots
+
+### Homepage
+![homepage](./docs/homepage.png)
+
+### Chat
+![homepage](./docs/chat.png)

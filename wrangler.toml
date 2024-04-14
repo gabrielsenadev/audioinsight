@@ -9,7 +9,7 @@ binding = "AI"
 [[d1_databases]]
 binding = "DB"
 database_name = "db-d1-audioinsight"
-database_id = "a1ed2340-5bae-4456-9ffd-00c8b525ec55"
+database_id = "d485c019-8021-4d08-88e6-e5a6ea66ad4e"
 
 [[r2_buckets]]
 binding = 'R2'
