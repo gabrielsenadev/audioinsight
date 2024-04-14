@@ -5,7 +5,7 @@ AudioInsight processes audio, transcribes it, summarizes it, generates a title f
 
 This is an entry for the [Cloudflare AI Challenge](https://dev.to/challenges/cloudflare).
 
-Live on: [https://audioinsight-4on.pages.dev](https://audioinsight-4on.pages.dev)
+Live on: [https://audioinsight.gabrielsena.dev/](https://audioinsight.gabrielsena.dev/)
 
 - [How It Works](#how-it-works)
   - [Under the Hood](#under-the-hood)
