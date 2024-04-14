@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
   const audioSizeMB = audio.size / 1e6;
 
-  if (audioSizeMB > 4) {
+  if (audioSizeMB > 5) {
     return new Response('Audio file too long. Try compression.', {
       status: 403,
     });
