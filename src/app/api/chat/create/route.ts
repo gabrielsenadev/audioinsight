@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     dbController.addChatMessage(db,
       {
         chatId: id,
-        content: `Content: ${text}\nSummary: ${summary}`,
+        content: `Summary: ${summary}`,
         role: 'assistance',
       });
 
@@ -69,10 +69,11 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify({
       id,
       title,
+      content: text,
       messages: [
         {
           role: 'assistance',
-          message: `Content: ${text}\nSummary: ${summary}`,
+          message: `Summary: ${summary}`,
         },
       ],
     }), {

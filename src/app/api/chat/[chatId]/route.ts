@@ -79,7 +79,6 @@ export async function GET(request: NextRequest, context: { params: Params }) {
   return new Response(JSON.stringify({
     id,
     title: chat.title,
-    vtt: chat.vtt,
     content: chat.content,
     messages: chatMessages,
   }), {

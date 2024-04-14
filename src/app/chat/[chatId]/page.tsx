@@ -19,7 +19,6 @@ type ChatData = {
   id: string;
   content: string;
   title: string;
-  vtt: string;
   messages: ChatMessage[];
 }
 
@@ -34,6 +33,7 @@ export default function Home() {
   const [data, setData] = useState<ChatData | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [audioURL, setAudioURL] = useState<string>('');
+  const [showTranscription, setShowTranscription] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -118,17 +118,22 @@ export default function Home() {
       });
   };
 
+  const onClickShowTranscription = () => {
+    setShowTranscription(!showTranscription);
+  };
+
   return (
     <main className="bg-[#111111] h-full justify-center flex p-2 flex-col items-center animate-wave-width2">
+    
       {error && (<section className="w-[90%] px-8 py-4 rounded-xl mb-4 bg-slate-100 text-red-600">
         <p>Error: {error}</p>
       </section>)}
       {showMainContent && <section className="w-[90%] max-w-full h-[90%] bg-slate-100 rounded-3xl p-10 flex justify-between flex-col transition-all items-center">
         <header className="self-start max-w-full">
           <button className="flex items-center hover:underline transition-all hover:text-sky-700" onClick={onClickBack}><MdArrowBackIos /> Go back</button>
-          <h1 className="text-4xl font-bold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{data?.title}</h1>
+          <h1 className="text-4xl font-bold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{data.title}</h1>
         </header>
-        {audioURL && <section className="w-full max-w-[90%] mb-6 flex gap-4">
+        {audioURL && <section className="w-full max-w-[90%] my-6 flex gap-4">
           <button onClick={onPlayPause}>
             {isPlaying ? <MdOutlinePauseCircleFilled fontSize={80} className={'text-sky-800'} /> :
               <MdOutlinePlayCircleFilled fontSize={80} className={`hover:text-sky-700 text-black transition-colors`} />
@@ -149,7 +154,19 @@ export default function Home() {
             />
           </div>
         </section>}
-        <section className="h-full w-[750px] max-w-full gap-2 flex flex-col overflow-auto mb-8">
+        <section className={`${showTranscription ? 'min-h-36' : 'min-h-10'} max-h-36 w-[750px] max-w-full gap-2 flex flex-col overflow-auto`}>
+          <button
+            onClick={onClickShowTranscription}
+            className="text-white p-2 bg-black rounded-lg hover:bg-black/90 transition-colors"
+            >
+              {showTranscription ? 'Hide content transcription' : 'View content transcription'}
+          </button>
+          {showTranscription && <div className="max-h-32 overflow-auto">
+            <h4 className="text-black font-bold text-lg">Content Transcription</h4>
+            <p className="text-black/95">{data.content}</p>
+            </div>}
+        </section>
+        <section className="h-full w-[750px] max-w-full gap-2 flex flex-col overflow-auto mb-8 mt-2">
           {messages.map((message, index) => <UserMessage key={index} isAssistant={message.role === 'assistance'} messages={message.content.split('\n')} />)}
         </section>
         <section className="flex flex-col items-center max-w-full">
