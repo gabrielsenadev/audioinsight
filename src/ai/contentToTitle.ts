@@ -3,7 +3,7 @@ import { AiTextGenerationOutput } from "@cloudflare/ai/dist/ai/tasks/text-genera
 
 export async function contentToTitle(ai: Ai, content: string) {
   const generated = await ai.run(
-    "@cf/meta/llama-2-7b-chat-fp16",
+    "@hf/thebloke/neural-chat-7b-v3-1-awq",
     {
       max_tokens: 50,
       messages: [

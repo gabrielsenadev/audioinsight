@@ -25,7 +25,7 @@ export async function contextTextGeneration(
   ];
 
   return ai.run(
-    "@cf/meta/llama-2-7b-chat-fp16",
+    "@hf/thebloke/neural-chat-7b-v3-1-awq",
     {
       messages,
       max_tokens: 512,

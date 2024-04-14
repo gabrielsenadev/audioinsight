@@ -71,3 +71,17 @@ Finally, if you also want to see the example work in the deployed application ma
 
 # Setup
 npx wrangler d1 create db-d1-audioinsight
+
+# Setup
+1. Clone this repo;
+3. Install dependencies;
+3. Create d1 database;
+npx wrangler d1 create db-d1-audioinsight
+3. Update on wrangler.toml, in section d1_databases, your database_id
+4. Up database schema
+npx wrangler d1 execute db-d1-audioinsight --remote --file=./src/database/schema.sql
+5. Create your R2 bucket and update bucket_name on wrangler.toml
+6. Deploy the application
+npm run deploy
+7. When running this command, you will be asked to create a new project or select a project. Choose one.
+8. On your project settings, set the compatibility flags to nodejs_compat, both preview and production
