@@ -86,7 +86,7 @@ npm run deploy
 
 ## Audio Examples
 
-In the examples/ directory, there are some useful audios to try this application.
+In the [examples/](/examples/) directory, there are some useful audios to try this application.
 
 ## Screenshots
 
