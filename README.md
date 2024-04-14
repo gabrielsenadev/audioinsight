@@ -1,3 +1,4 @@
+![audio insight screenshot](./docs/audioinsight-screenshot.png)
 # AudioInsight - Cloudflare AI Challenge Entry
 
 AudioInsight processes audio, transcribes it, summarizes it, generates a title for the content, and allows users to ask questions about the related audio.
