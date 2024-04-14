@@ -11,13 +11,21 @@ const dbController = DatabaseController.getInstance();
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
 
-  const { DB: db } = getRequestContext().env;
-  
+  const { DB: db, R2 } = getRequestContext().env;
+
   const audio = formData.get('audio') as File;
 
   if (!audio) {
     return new Response('Audio not found.', {
       status: 400,
+    });
+  }
+
+  const audioSizeMB = audio.size / 1e6;
+
+  if (audioSizeMB > 4) {
+    return new Response('Audio file too long. Try compression.', {
+      status: 403,
     });
   }
 
@@ -43,25 +51,28 @@ export async function POST(request: NextRequest) {
     id,
     content: text,
     vtt,
-    title
+    title,
   });
 
   if (chat.success) {
-    dbController.addChatMessage(db, {
-      chatId: id,
-      content: summary,
-      role: 'assistance',
-    });
+    dbController.addChatMessage(db,
+      {
+        chatId: id,
+        content: `Content: ${text}\nSummary: ${summary}`,
+        role: 'assistance',
+      });
+
+    if (R2) {
+      await R2.put(`audio-${id}`, audio);
+    }
 
     return new Response(JSON.stringify({
       id,
       title,
-      vtt,
-      content: text,
       messages: [
         {
           role: 'assistance',
-          message: summary,
+          message: `Content: ${text}\nSummary: ${summary}`,
         },
       ],
     }), {

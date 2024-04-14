@@ -20,7 +20,7 @@ export class DatabaseController {
     id,
     content,
     vtt,
-    title
+    title,
   }: ChatData) {
     return db.prepare(`INSERT INTO chats (id, content, vtt, title) VALUES (?, ?, ?, ?)`).bind(id, content, vtt, title).run();
   }

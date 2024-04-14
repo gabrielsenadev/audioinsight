@@ -7,25 +7,21 @@ import { contextTextGeneration } from '@/ai';
 export const runtime = 'edge';
 const dbController = DatabaseController.getInstance();
 
-type SendMessageRequest = {
-  chatId: number;
-  message: string;
-}
-
 type Params = {
   chatId: string;
 };
 
 export async function POST(request: NextRequest, context: { params: Params }) {
   const id = context.params.chatId;
-  const data = await request.json<SendMessageRequest>();
+  const formData = await request.formData();
+  const message = formData.get('message') as string;
 
-  if (!data?.message) {
+  if (!message) {
     return new Response('Bad Request.', {
       status: 400,
     });
   }
-  const { message } = data;
+
   const { DB: db } = getRequestContext().env;
 
   const chat = await dbController.getChat(db, id);

@@ -5,8 +5,21 @@ export async function contentToTitle(ai: Ai, content: string) {
   const generated = await ai.run(
     "@cf/meta/llama-2-7b-chat-fp16",
     {
-      prompt: `<s>[INST]<<SYS>>Generate a title of the user content. Only one.<</SYS>>${content}[/INST]</s>`,
-      raw: true,
+      max_tokens: 50,
+      messages: [
+        {
+          content: 'When receive a input, generate a title of this input.',
+          role: 'system'
+        },
+        {
+          content: 'Generate only one title.',
+          role: 'system'
+        },
+        {
+          content: content,
+          role: 'user'
+        },
+      ]
     }
   ) as { response: string };
   return generated.response.replaceAll('"', '').replace('titled', '').trim();

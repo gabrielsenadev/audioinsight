@@ -10,6 +10,9 @@ binding = "DB"
 database_name = "db-d1-audioinsight"
 database_id = "d5a185a7-aff8-40c8-bbc0-fc72d62683ec"
 
+[[r2_buckets]]
+binding = 'R2'
+bucket_name = 'r2-audios'
 
 # Variable bindings. These are arbitrary, plaintext strings (similar to environment variables)
 # Note: Use secrets to store sensitive data.
