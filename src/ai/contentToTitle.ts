@@ -8,15 +8,11 @@ export async function contentToTitle(ai: Ai, content: string) {
       max_tokens: 50,
       messages: [
         {
-          content: 'When receive a input, generate a title of this input.',
+          content: 'You will be provided with a content, and your task is to generate one title. Maximum 30 characters.',
           role: 'system'
         },
         {
-          content: 'Generate only one title.',
-          role: 'system'
-        },
-        {
-          content: content,
+          content: `Content: ${content}`,
           role: 'user'
         },
       ]

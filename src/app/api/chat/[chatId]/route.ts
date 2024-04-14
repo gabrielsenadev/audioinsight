@@ -37,7 +37,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
   const firstChatMessage = (await dbController.getFirstChatMessage(db, id)) ?? { role: 'assistant', content: ' '};
   const { response: content } = (await contextTextGeneration(ai, message, chat.vtt, [firstChatMessage])) as { response: string };
 
-  dbController.addChatMessages(db, [
+  await dbController.addChatMessages(db, [
     {
       chatId: id,
       content: message,
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, context: { params: Params }) {
       content,
       role: 'assistance',
     },
-  ])
+  ]);
  
   return new Response(JSON.stringify({
     role: 'assistance',

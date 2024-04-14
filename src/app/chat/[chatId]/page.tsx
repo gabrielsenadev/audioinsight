@@ -131,7 +131,7 @@ export default function Home() {
       {showMainContent && <section className="w-[90%] max-w-full h-[90%] bg-slate-100 rounded-3xl p-10 flex justify-between flex-col transition-all items-center">
         <header className="self-start max-w-full">
           <button className="flex items-center hover:underline transition-all hover:text-sky-700" onClick={onClickBack}><MdArrowBackIos /> Go back</button>
-          <h1 className="text-4xl font-bold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{data.title}</h1>
+          <h1 className="text-[1.75rem] font-bold mb-2 overflow-hidden text-ellipsis whitespace-nowrap">{data.title}</h1>
         </header>
         {audioURL && <section className="w-full max-w-[90%] my-6 flex gap-4">
           <button onClick={onPlayPause}>
