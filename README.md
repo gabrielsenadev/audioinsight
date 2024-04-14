@@ -8,6 +8,8 @@ This is an entry for the [Cloudflare AI Challenge](https://dev.to/challenges/clo
 Live on: [https://audioinsight-4on.pages.dev](https://audioinsight-4on.pages.dev)
 
 - [How It Works](#how-it-works)
+  - [Under the Hood](#under-the-hood)
+  - [Additional Features](#additional-features)
 - [How to Install](#how-to-install)
 - [Audio Examples](#audio-examples)
 - [Screenshots](#screenshots)
@@ -25,6 +27,10 @@ Live on: [https://audioinsight-4on.pages.dev](https://audioinsight-4on.pages.dev
 - [D1 Database](https://developers.cloudflare.com/d1/) is responsible for storing chat and its history.
 - The [Cloudflare R2](https://developers.cloudflare.com/r2/) is responsible for storing chat's audio files.
 - [Cloudflare Pages](https://developers.cloudflare.com/pages/) is responsible for hosting the entire [NextJS](https://nextjs.org/) application, which provides a front-end and back-end ecosystem.
+
+### Additional Features
+
+- Preserve conversation: Your chat and audio are stored remotely. You can continue talking about the audio later.
 
 ## How to Install
 
