@@ -13,48 +13,6 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-
-      animation: {
-        'wave-normal': 'wave-normal 1s ease-in-out infinite',
-        'wave-loud': 'wave-loud 1.2s ease-in-out infinite',
-        'wave-quiet': 'wave-quiet 1.1s ease-in-out infinite',
-      },
-
-      keyframes: {
-        'wave-normal': {
-          '25%': {
-            transform: 'scaleY(1)'
-          },
-          '50%': {
-            transform: 'scaleY(.4)'
-          },
-          '75%': {
-            transform: 'scaleY(.6)'
-          },
-        },
-        'wave-loud': {
-          '25%': {
-            transform: 'scaleY(1)'
-          },
-          '50%': {
-            transform: 'scaleY(.8)'
-          },
-          '75%': {
-            transform: 'scaleY(.6)'
-          },
-        },
-        'wave-quiet': {
-          '25%': {
-            transform: 'scaleY(1)'
-          },
-          '50%': {
-            transform: 'scaleY(.2)'
-          },
-          '75%': {
-            transform: 'scaleY(.4)'
-          },
-        },
-      }
     },
   },
   plugins: [],

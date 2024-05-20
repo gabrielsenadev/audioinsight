@@ -12,19 +12,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "target": "ESNext",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@public/*": ["./public/*"],
-    },
-    "types": [
-        "@cloudflare/workers-types/2023-07-01"
-    ]
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
