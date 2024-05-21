@@ -1,5 +1,5 @@
 import { AudioToTextResponse } from "@/types/audio-to-text";
-import { AudioToTextProviderImpl } from "./AudioToTextProviderImpl";
+import { AudioToTextProviderImpl } from "../AudioToTextProviderImpl";
 
 export class CloudflareWhisperTinyEn extends AudioToTextProviderImpl {
   async execute(audio: Blob): Promise<AudioToTextResponse> {

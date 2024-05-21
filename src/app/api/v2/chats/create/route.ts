@@ -17,6 +17,8 @@ export async function POST(request: NextRequest) {
     }
 
     const { content, vtt } = await AIService.getInstance().convertAudioToText(data);
+    const summary = await AIService.getInstance().summaryContent(content);
+    console.log('result', summary);
 
   } catch (error) {
     if (error instanceof Error) {

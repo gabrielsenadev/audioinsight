@@ -1,5 +1,5 @@
 import { AudioToTextResponse } from "@/types/audio-to-text";
-import { AudioToTextProviderImpl } from "./providers/AudioToTextProviderImpl";
+import { AudioToTextProviderImpl } from "./AudioToTextProviderImpl";
 import { CloudflareWhisperTinyEn, CloudflareWhisper } from "./providers";
 
 export class AudioToTextProvider {
