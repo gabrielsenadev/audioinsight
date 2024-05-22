@@ -16,10 +16,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { content, vtt } = await AIService.getInstance().convertAudioToText(data);
-    const summary = await AIService.getInstance().summaryContent(content);
-    console.log('result', summary);
-
+    // const { content, vtt } = await AIService.getInstance().convertAudioToText(data);
+    // const summary = await AIService.getInstance().summaryContent(content);
+    // const data2 = await AIService.getInstance().askQuestion('Como você se chama');
+    // const response = new Response(data2.body);
+    // return response;
   } catch (error) {
     if (error instanceof Error) {
       console.log('Unhandled error', error);
