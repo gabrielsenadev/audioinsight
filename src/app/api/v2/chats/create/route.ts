@@ -1,6 +1,6 @@
 import AIService from "@/services/AIService";
 import audioSchema from "@/validators/audio-schema";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 /*
 [binary audio] > created chat -> response chat data: title, messages
@@ -15,16 +15,38 @@ export async function POST(request: NextRequest) {
         status: 400,
       });
     }
+    // only making tests
+    const data2 = await AIService.getInstance().askQuestion(
+      "hello"
+    );
+    // if (!data2.body) {
+    //   return new Response("API Problem", {
+    //     status: 500,
+    //   });
+    // }
+    // const [userStream, appStream] = data2.body.tee();
+    // const reader = appStream.pipeThrough(new TextDecoderStream()).getReader();
+    // let text = "";
 
-    // const { content, vtt } = await AIService.getInstance().convertAudioToText(data);
-    // const summary = await AIService.getInstance().summaryContent(content);
-    // const data2 = await AIService.getInstance().askQuestion('Como você se chama');
-    // const response = new Response(data2.body);
-    // return response;
+    // reader.read().then(function processData({ done, value }) {
+    //   if (done) {
+    //     console.log(text);
+    //     return;
+    //   }
+
+    //   try {
+    //     const parsedData = JSON.parse(value.replace('data: ', ''));
+    //     text += parsedData.response;
+    //   } catch (error) {}
+
+    //   reader.read().then(processData);
+    // });
+
+    // return new NextResponse(userStream);
   } catch (error) {
     if (error instanceof Error) {
-      console.log('Unhandled error', error);
-      return new Response('Internal Server Error', {
+      console.log("Unhandled error", error);
+      return new Response("Internal Server Error", {
         status: 500,
       });
     }

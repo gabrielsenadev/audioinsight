@@ -1,6 +1,8 @@
-export type TextGenerationResponse = Promise<Response> | {
+export type TextGenerationResponse = {
   content: string;
 };
+
+export type TextGenerationStreamResponse = Response;
 
 export type TextGenerationMessageInput = {
   role: string;
@@ -8,7 +10,12 @@ export type TextGenerationMessageInput = {
 };
 
 export type TextGenerationExecutorOptions = {
-  stream: boolean;
-  max_tokens: number;
+  stream?: boolean;
+  max_tokens?: number;
+}
+
+export type TextGenerationStreamExecutorOptions = {
+  stream: true;
+  max_tokens?: number;
 }
 

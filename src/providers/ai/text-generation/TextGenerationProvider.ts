@@ -1,4 +1,4 @@
-import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse } from "@/types";
+import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "@/types";
 import { CloudflareOpenChatOpenChat } from "./providers";
 import { TextGenerationProviderImpl } from "./TextGenerationProviderImpl";
 
@@ -18,12 +18,14 @@ export class TextGenerationProvider {
     return TextGenerationProvider.instance;
   }
 
-  public async execute(messages: TextGenerationMessageInput[], options: TextGenerationExecutorOptions): Promise<TextGenerationResponse> {
+  async execute(messages: TextGenerationMessageInput[], options: TextGenerationExecutorOptions & { stream?: true }): Promise<TextGenerationStreamResponse>;
+  async execute(messages: TextGenerationMessageInput[], options?: TextGenerationExecutorOptions & { stream?: false }): Promise<TextGenerationResponse>;
+  async execute(messages: TextGenerationMessageInput[], options?: TextGenerationExecutorOptions): Promise<TextGenerationStreamResponse | TextGenerationResponse> {
     let lastError = null;
 
     for (let provider of this.providers) {
       try {
-        if (options.stream) {
+        if (options?.stream) {
           return provider.execute(messages, options);
         }
 

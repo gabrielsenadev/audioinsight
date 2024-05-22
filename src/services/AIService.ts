@@ -35,7 +35,6 @@ class AIService {
       content,
       role: 'user',
     }], {
-      max_tokens: 1024,
       stream: true,
     });
   }
