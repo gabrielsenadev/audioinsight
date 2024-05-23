@@ -2,6 +2,7 @@
 
 import { UserMessage } from "@/components/UserMessage";
 import { WaveLoading } from "@/components/WaveLoading";
+import { readStream } from "@/utils/readStream";
 import WavesurferPlayer from "@wavesurfer/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -11,14 +12,15 @@ import WaveSurfer from "wavesurfer.js";
 export const runtime = 'edge';
 
 type ChatMessage = {
-  role: 'assistance' | 'user';
   content: string;
+  role: string;
+  timeStamp: number;
 };
 
 type ChatData = {
-  id: string;
   content: string;
   title: string;
+  vtt: string;
   messages: ChatMessage[];
 }
 
@@ -35,6 +37,7 @@ export default function Home() {
   const [audioURL, setAudioURL] = useState<string>('');
   const [showTranscription, setShowTranscription] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [streamMessage, setStreamMessage] = useState<string>('');
   const formRef = useRef<HTMLFormElement>(null);
 
   const isFullLoading = loadingType === 'full';
@@ -47,16 +50,16 @@ export default function Home() {
     const fetchData = () => {
       setLoadingType('full');
       setError('');
-      fetch(`/api/chat/${chatId}`)
+      fetch(`/api/chats/${chatId}`)
         .then(async (response) => {
           if (!response.ok) {
             const responseText = await response.text();
             throw new Error(`Request Error: ${responseText}`);
           }
-          const data = await response.json<ChatData>();
+          const data = (await response.json()) as ChatData;
           setData(data);
           setMessages(data.messages);
-          setAudioURL(`/api/audio/${data.id}`);
+          setAudioURL(`/api/chats/${chatId}/audio`);
         })
         .catch((error: Error) => {
           setError(error.message);
@@ -97,18 +100,33 @@ export default function Home() {
 
     setMessages([...messages, userMessageData]);
 
-    fetch(`/api/chat/${chatId}`, {
+    fetch(`/api/chats/${chatId}/messages`, {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify({
+        message: formData.get('message'),
+      }),
     })
       .then(async (response) => {
-        if (!response.ok) {
+        if (!response.ok || !response.body) {
           const responseText = await response.text();
           throw new Error(`Request Error: ${responseText}`);
         }
-        const responseMessage = await response.json<ChatMessage>();
-        setMessages([...messages, userMessageData, responseMessage]);
-        formRef.current?.reset();
+
+        let lastStreamMessage = streamMessage;
+
+        readStream(response.body, (value) => {
+          lastStreamMessage = `${lastStreamMessage}${value}`;
+          setStreamMessage(lastStreamMessage);
+        }, (value) => {
+          setMessages([...messages, userMessageData, {
+            content: value,
+            role: 'assistant',
+            timeStamp: Date.now(), 
+          }]);
+          setStreamMessage('');
+          formRef.current?.reset();
+      });
+        
       })
       .catch((error: Error) => {
         setError(error.message);
@@ -167,7 +185,8 @@ export default function Home() {
             </div>}
         </section>
         <section className="h-full w-[750px] max-w-full gap-2 flex flex-col overflow-auto mb-8 mt-2">
-          {messages.map((message, index) => <UserMessage key={index} isAssistant={message.role === 'assistance'} messages={message.content.split('\n')} />)}
+          {messages.map((message, index) => <UserMessage key={index} isAssistant={message.role === 'assistant'} messages={message.content.split('\n')} />)}
+          { streamMessage && <UserMessage isAssistant messages={streamMessage.split('\n')} />}
         </section>
         <section className="flex flex-col items-center max-w-full">
           <form className="w-[750px] max-w-full flex gap-1 mb-4" action={onSubmit} ref={formRef}>
