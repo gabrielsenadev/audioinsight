@@ -1,3 +1,5 @@
+import { MessageRole } from "../shared";
+
 export type Chat = {
   title: string;
   vtt: string;
@@ -6,5 +8,5 @@ export type Chat = {
 
 export type ChatMessage = {
   content: string;
-  role: string;
+  role: MessageRole;
 }

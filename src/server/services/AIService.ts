@@ -1,6 +1,7 @@
 import { AudioToTextProvider } from "@/server/providers/";
 import { ContentSummaryProvider } from "@/server/providers/ai/content-summary/ContentSummaryProvider";
 import { TextGenerationProvider } from "@/server/providers/ai/text-generation/TextGenerationProvider";
+import { GenerateTextStreamInput } from "../types/dto/ai-service";
 
 class AIService {
   private static instance: AIService;
@@ -32,11 +33,11 @@ class AIService {
 
   public async createTitle(content: string) {
     const PROMPTS = [{
-      content: 'Generate a captivating title based on the following user content. The title should be engaging, relevant to the content, and intriguing enough to draw attention.',
+      content: 'You will be provided with a content, and your task is to generate one title. Maximum 30 characters.',
       role: 'system',
     },
     {
-      content,
+      content: `Content:${content}`,
       role: 'user',
     }];
 
@@ -46,6 +47,12 @@ class AIService {
     });
 
     return result.content.trim();
+  }
+
+  public async generateTextStream({ messages }: GenerateTextStreamInput) {
+    return this.textGenerationProvider.execute(messages, {
+      stream: true,
+    });
   }
 }
 

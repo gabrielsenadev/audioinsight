@@ -1,5 +1,5 @@
 import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "@/server/types/provider";
-import { CloudflareOpenChatOpenChat } from "./providers";
+import { CloudflareOpenChatOpenChat, CloudflareFalcon7bInstruct, CloudflareTheBlokeLLma13B, CloudflareMetaLlma38b} from "./providers";
 import { TextGenerationProviderImpl } from "./TextGenerationProviderImpl";
 
 export class TextGenerationProvider {
@@ -7,7 +7,7 @@ export class TextGenerationProvider {
   private static instance: TextGenerationProvider;
 
   private constructor() {
-    this.providers = [new CloudflareOpenChatOpenChat()];
+    this.providers = [new CloudflareMetaLlma38b(), new CloudflareFalcon7bInstruct(), new CloudflareTheBlokeLLma13B(), new CloudflareOpenChatOpenChat()];
   }
 
   public static getInstance() {
