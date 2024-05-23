@@ -1,7 +1,7 @@
 import { ChatsRepository } from "@/server/repositories/ChatsRepository";
 import { v4 as uuidv4 } from 'uuid';
 import AIService from "./AIService";
-import { CreateChatInput } from "../types/dto";
+import { CreateChatInput } from "../types/dto/chats-service";
 import { MessageRole } from "../types/shared";
 import { GenerateTextStreamMessageInput } from "../types/dto/ai-service";
 
