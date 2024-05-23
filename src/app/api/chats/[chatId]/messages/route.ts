@@ -7,6 +7,8 @@ type Params = {
   chatId: string;
 };
 
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest, { params: { chatId }}: { params: Params }) {
   try {
     const dirtyData = await request.json();

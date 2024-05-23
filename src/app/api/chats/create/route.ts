@@ -2,6 +2,8 @@ import { ChatsService } from "@/server/services/ChatsService";
 import audioSchema from "@/server/validators/audio-schema";
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = 'edge';
+
 export async function POST(request: NextRequest) {
   try {
     const dirtyData = await request.blob();
