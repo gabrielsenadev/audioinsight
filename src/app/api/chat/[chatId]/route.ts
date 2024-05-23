@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { Ai } from '@cloudflare/ai';
-import { DatabaseController } from '@/database/DatabaseController';
+import { DatabaseController } from '@/server/database/DatabaseController';
 import { contextTextGeneration } from '@/ai';
 
 export const runtime = 'edge';

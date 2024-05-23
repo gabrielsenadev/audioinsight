@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { v4 as uuidv4 } from 'uuid';
 import { Ai } from '@cloudflare/ai';
-import { DatabaseController } from '@/database/DatabaseController';
+import { DatabaseController } from '@/server/database/DatabaseController';
 import { audioToText, contentSummarization, contentToTitle } from '@/ai';
 
 export const runtime = 'edge';

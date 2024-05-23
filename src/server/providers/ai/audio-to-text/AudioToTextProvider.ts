@@ -1,4 +1,4 @@
-import { AudioToTextResponse } from "@/types/audio-to-text";
+import { AudioToTextResponse } from "@/server/types/provider";
 import { AudioToTextProviderImpl } from "./AudioToTextProviderImpl";
 import { CloudflareWhisperTinyEn, CloudflareWhisper } from "./providers";
 

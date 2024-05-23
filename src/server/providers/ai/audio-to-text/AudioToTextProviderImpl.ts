@@ -1,4 +1,4 @@
-import { AudioToTextResponse } from "@/types/audio-to-text";
+import { AudioToTextResponse } from "@/server/types/provider";
 
 export abstract class AudioToTextProviderImpl {
   abstract execute(audio: Blob): Promise<AudioToTextResponse>

@@ -1,4 +1,4 @@
-import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "@/types";
+import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "@/server/types/provider";
 import { CloudflareOpenChatOpenChat } from "./providers";
 import { TextGenerationProviderImpl } from "./TextGenerationProviderImpl";
 

@@ -1,6 +1,6 @@
-import { AudioToTextProvider } from "@/providers/";
-import { ContentSummaryProvider } from "@/providers/ai/content-summary/ContentSummaryProvider";
-import { TextGenerationProvider } from "@/providers/ai/text-generation/TextGenerationProvider";
+import { AudioToTextProvider } from "@/server/providers/";
+import { ContentSummaryProvider } from "@/server/providers/ai/content-summary/ContentSummaryProvider";
+import { TextGenerationProvider } from "@/server/providers/ai/text-generation/TextGenerationProvider";
 
 class AIService {
   private static instance: AIService;
@@ -30,13 +30,22 @@ class AIService {
     return this.contentSummaryProvider.execute(content);
   }
 
-  public askQuestion(content: string) {
-    return this.textGenerationProvider.execute([{
+  public async createTitle(content: string) {
+    const PROMPTS = [{
+      content: 'Generate a captivating title based on the following user content. The title should be engaging, relevant to the content, and intriguing enough to draw attention.',
+      role: 'system',
+    },
+    {
       content,
       role: 'user',
-    }], {
-      stream: true,
+    }];
+
+    const result = await this.textGenerationProvider.execute(PROMPTS, {
+      stream: false,
+      max_tokens: 256,
     });
+
+    return result.content.trim();
   }
 }
 

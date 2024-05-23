@@ -1,4 +1,4 @@
-import { ChatMessageData } from "@/types";
+import { ChatMessageData } from "@/server/types/provider";
 import { Ai } from "@cloudflare/ai";
 
 export async function contextTextGeneration(
