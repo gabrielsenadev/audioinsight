@@ -61,7 +61,7 @@ export class ChatsRepository {
     const prefix = this.getChatMessageDirectoryKey(id);
 
     const messagesList = await this.store.list({
-      directories: true,
+      directories: false,
       prefix,
     });
 

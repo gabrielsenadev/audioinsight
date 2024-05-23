@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@netlify/blobs": "^7.3.0",
+    "@wavesurfer/react": "^1.0.6",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-icons": "^5.2.1",
     "uuid": "^9.0.1",
     "wavesurfer.js": "^7.7.15",
     "zod": "^3.23.8"

@@ -13,18 +13,19 @@ export default function Home() {
   const onSubmit = async (formData: FormData) => {
     setIsLoading(true);
     setError('');
+    const audio = formData.get('audio');
 
-    fetch('/api/chat/create', {
+    fetch('/api/chats/create', {
       method: 'POST',
-      body: formData,
+      body: audio,
     })
     .then(async (response) => {
       if (!response.ok) {
         const responseText = await response.text();
         throw new Error(`Request Error: ${responseText}`);
       }
-      const data = await response.json<{ id: string }>();
-      router.push(`/chat/${data.id}`);
+      const text = await response.text();
+      router.push(`/chat/${text}`);
     })
     .catch(error => {
       setError(error.message);

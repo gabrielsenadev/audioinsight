@@ -46,7 +46,7 @@ class AIService {
       max_tokens: 256,
     });
 
-    return result.content.trim();
+    return result.content.trim().replaceAll("\"", "");
   }
 
   public async generateTextStream({ messages }: GenerateTextStreamInput) {
