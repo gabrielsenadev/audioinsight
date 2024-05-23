@@ -61,4 +61,14 @@ export class ChatsService {
       messages
     };
   }
+
+  public async getChatAudio(id: string) {
+    const blob = await this.chatsRepository.getChatAudio({ id });
+
+    if (!blob) {
+      throw new Error('Audio not found.');
+    }
+
+    return blob;
+  }
 }

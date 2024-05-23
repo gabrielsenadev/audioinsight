@@ -1,5 +1,5 @@
-import { ChatsService } from "@/services/ChatsService";
-import audioSchema from "@/validators/audio-schema";
+import { ChatsService } from "@/server/services/ChatsService";
+import audioSchema from "@/server/validators/audio-schema";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
