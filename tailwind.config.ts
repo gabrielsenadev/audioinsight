@@ -10,6 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         dark: '#111111',
+        primary: '#0466c8',
       },
       animation: {
         'wave-normal': 'wave-normal 1s ease-in-out infinite',

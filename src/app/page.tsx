@@ -34,7 +34,7 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-dark h-full justify-center flex p-2 flex-col items-center">
+    <main className="flex flex-col items-center justify-center p-2 h-full">
       <section className="text-white flex flex-col items-center text-center justify-center gap-5">
         <header>
           <h1 className="text-6xl font-bold mb-2">Start with a audio.</h1>
@@ -54,7 +54,7 @@ export default function Home() {
           />
           <button
             type="submit"
-            className="bg-sky-400 py-2 px-6 rounded-md text-black hover:bg-sky-400/95 disabled:cursor-not-allowed"
+            className="bg-primary text-white py-2 px-6 rounded-md hover:bg-primary/95 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             Upload

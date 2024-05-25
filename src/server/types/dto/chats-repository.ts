@@ -2,6 +2,10 @@ export type CreateChatInput = {
   title: string;
   vtt: string;
   content: string;
+  id: string;
+}
+
+export type CreateChatAudioInput = {
   audio: Blob;
   id: string;
 }
