@@ -1,3 +1,4 @@
+import { debounce } from "@/utils";
 import { IconUser, IconWaveSawTool } from "@tabler/icons-react";
 import { useEffect, useRef } from "react";
 
@@ -5,6 +6,8 @@ interface UserMessageProps {
   isAssistant: boolean;
   messages: string[];
 }
+
+const debouncer = debounce(50);
 
 export function UserMessage({
   isAssistant,
@@ -17,7 +20,9 @@ export function UserMessage({
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    divRef.current?.scrollIntoView({ behavior: 'smooth' });
+    debouncer(() => {
+      divRef.current?.scrollIntoView({ behavior: 'smooth' });
+    });
   }, [messages]);
 
   return (
