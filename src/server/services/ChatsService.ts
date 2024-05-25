@@ -1,18 +1,24 @@
-import { ChatsRepository } from "@/server/repositories/ChatsRepository";
-import { v4 as uuidv4 } from 'uuid';
+import { ChatsRepository } from "../repositories/ChatsRepository";
 import AIService from "./AIService";
 import { CreateChatInput } from "../types/dto/chats-service";
 import { MessageRole } from "../types/shared";
 import { GenerateTextStreamMessageInput } from "../types/dto/ai-service";
+import { generateID } from "../utils/generate-id";
+import { MessagesRepository } from "../repositories";
+import { AudioRepository } from "../repositories/AudioRepository";
 
 export class ChatsService {
   private static instance: ChatsService;
   private chatsRepository: ChatsRepository;
+  private messageRepository: MessagesRepository;
+  private audioRepository: AudioRepository;
   private aIService: AIService;
 
   private constructor() {
     this.chatsRepository = ChatsRepository.getInstance();
     this.aIService = AIService.getInstance();
+    this.messageRepository = MessagesRepository.getInstance();
+    this.audioRepository = AudioRepository.getInstance();
   }
 
   public static getInstance() {
@@ -24,7 +30,7 @@ export class ChatsService {
   }
 
   async createChat({ audio }: CreateChatInput) {
-    const id = uuidv4().substring(0, 16);
+    const id = generateID();
     const { content, vtt } = await this.aIService.convertAudioToText(audio);
     const { content: summary } = await this.aIService.summaryContent(content);
     const title = await this.aIService.createTitle(summary);
@@ -33,11 +39,15 @@ export class ChatsService {
       content,
       vtt,
       title,
-      audio,
       id,
     });
 
-    await this.chatsRepository.addChatMessage({
+    await this.audioRepository.createAudio({
+      id,
+      audio
+    });
+
+    await this.messageRepository.addChatMessage({
       chatId: id,
       content: `Summary: ${summary}`,
       role: 'assistant',
@@ -53,7 +63,7 @@ export class ChatsService {
       throw Error('Chat not found');
     }
 
-    const messages = await this.chatsRepository.getChatMessages({ id });
+    const messages = await this.messageRepository.getChatMessages({ id });
 
     return {
       ...chat,
@@ -62,7 +72,7 @@ export class ChatsService {
   }
 
   public async getChatAudio(id: string) {
-    const blob = await this.chatsRepository.getChatAudio({ id });
+    const blob = await this.audioRepository.getAudio({ id });
 
     if (!blob) {
       throw new Error('Audio not found.');
@@ -78,7 +88,7 @@ export class ChatsService {
       throw new Error('Chat not found');
     }
 
-    const messagesHistory = await this.chatsRepository.getChatMessages({ id: chatId });
+    const messagesHistory = (await this.messageRepository.getChatMessages({ id: chatId })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 3);
 
     const messages = [
       {
@@ -86,12 +96,12 @@ export class ChatsService {
         role: 'system',
       },
       {
-        content: `Context: ${chat.content}`,
-        role: 'system',
+        content: `Context:${chat.vtt}`,
+        role: 'assistant',
       },
       {
-        content: `VTT: ${chat.vtt}`,
-        role: 'system',
+        content: `VTT:${chat.vtt}`,
+        role: 'assistant',
       },
       ...messagesHistory.map(message => ({ role: message.role, content: message.content })),
       {
@@ -100,7 +110,7 @@ export class ChatsService {
       }
     ] as GenerateTextStreamMessageInput[];
 
-    await this.chatsRepository.addChatMessage({
+    await this.messageRepository.addChatMessage({
       chatId,
       content: message,
       role: 'user',
@@ -136,7 +146,7 @@ export class ChatsService {
         });
       });
 
-      await this.chatsRepository.addChatMessage({
+      await this.messageRepository.addChatMessage({
         chatId,
         content: message,
         role: 'assistant',

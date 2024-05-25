@@ -8,12 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        dark: '#111111',
+        primary: '#0466c8',
       },
-
       animation: {
         'wave-normal': 'wave-normal 1s ease-in-out infinite',
         'wave-loud': 'wave-loud 1.2s ease-in-out infinite',

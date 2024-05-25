@@ -1,6 +1,6 @@
-import { AudioToTextProvider } from "@/server/providers/";
-import { ContentSummaryProvider } from "@/server/providers/ai/content-summary/ContentSummaryProvider";
-import { TextGenerationProvider } from "@/server/providers/ai/text-generation/TextGenerationProvider";
+import { AudioToTextProvider } from "../providers";
+import { ContentSummaryProvider } from "../providers/ai/content-summary/ContentSummaryProvider";
+import { TextGenerationProvider } from "../providers/ai/text-generation/TextGenerationProvider";
 import { GenerateTextStreamInput } from "../types/dto/ai-service";
 
 class AIService {

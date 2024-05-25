@@ -1,21 +1,23 @@
-import { Store, getStore } from '@netlify/blobs';
-import { v4 as uuidv4 } from 'uuid';
-import { AddChatMessageInput, CreateChatInput, GetChatInput } from '../types/dto';
-import { Chat, ChatMessage } from '../types/data';
+import { CreateChatInput, GetChatInput } from '../types/dto';
+import { Collection } from 'mongodb';
+import { RepositoryProvider } from '.';
+
+type ChatDocument = {
+  id: string;
+  title: string;
+  content: string;
+  vtt: string;
+  createdAt: Date;
+}
 
 export class ChatsRepository {
 
   private static instance: ChatsRepository;
-  private store: Store;
+  private collection: Collection<ChatDocument>;
 
   private constructor() {
     ChatsRepository.instance = this;
-
-    this.store = getStore({
-      name: 'chats',
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_TOKEN,
-    });
+    this.collection = RepositoryProvider.getInstance().getDB().collection<ChatDocument>('chats');
   }
 
   public static getInstance() {
@@ -26,70 +28,33 @@ export class ChatsRepository {
     return ChatsRepository.instance;
   }
 
-  private getChatAudioKey(id: string) {
-    return `${id}/audio`;
-  }
-
-  private getChatMessageDirectoryKey(id: string) {
-    return `${id}/message/`;
-  }
-
-  private getChatMessageKey(chatId: string, id: string) {
-    return `${chatId}/message/${id}`;
-  }
-
-  public async createChat({ content, id, title, vtt, audio }: CreateChatInput) {
-
-    await this.store.setJSON(id, {
+  public async createChat({ content, id, title, vtt }: CreateChatInput) {
+    const response = await this.collection.insertOne({
+      id,
       content,
       title,
       vtt,
+      createdAt: new Date(),
     });
 
-    await this.store.set(this.getChatAudioKey(id), audio);
+    return response.insertedId;
   }
 
   public async getChat({ id }: GetChatInput) {
-    return await this.store.get(id, { type: 'json' }) as Chat;
-  }
-
-  public getChatAudio({ id }: GetChatInput) {
-    return this.store.get(this.getChatAudioKey(id), { type: 'blob' });
-  }
-
-  public async getChatMessages({ id }: GetChatInput) {
-    const prefix = this.getChatMessageDirectoryKey(id);
-
-    const messagesList = await this.store.list({
-      directories: false,
-      prefix,
+    const chat = await this.collection.findOne({
+      id,
     });
 
-    const messages = await Promise.all(messagesList.blobs.map(async ({ key }) => {
-      const { data, metadata } = await this.store.getWithMetadata(key, { type: 'json' }) as { data: ChatMessage, metadata: { timeStamp: number }};
-      
-      return {
-        ...data,
-        ...metadata,
-      };
-    }));
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
 
-    messages.sort((mA, mB) => mA.timeStamp > mB.timeStamp ? 1 : -1);
-    
-    return messages;
+    const { title, vtt, content } = chat;
+
+    return {
+      title,
+      vtt,
+      content
+    };
   }
-
-  public async addChatMessage({ chatId, content, role }: AddChatMessageInput) {
-    const id = uuidv4().substring(0, 16);
-
-    await this.store.setJSON(this.getChatMessageKey(chatId, id), {
-      content,
-      role,
-    }, {
-      metadata: {
-        timeStamp: Date.now(),
-      }
-    });
-  }
-
 }
