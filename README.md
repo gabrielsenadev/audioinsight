@@ -6,17 +6,28 @@
 
 AudioInsight is a full-stack application that processes audio, generates transcriptions, and allows users to ask questions about the related audio.
 
-## Technologies and Tools
+## How to Install
 
-This application utilizes several features:
+1. Start by cloning this repository:
 
-- Next.js: Frontend React Application and API Application
-- Cloudflare AI: Interaction with Cloudflare AI Models
-- MongoDB: Database to store chats and messages
-- Netlify Blobs: To store audio files
-- Zod: User input API validation
-- Tabler Icons: Application icons
-- Wavesurfer: Audio wave visualization player
+```bash
+git clone git@github.com:gabrielsenadev/audioinsight.git
+```
+
+2. Install dependencies:
+
+```bash
+npm ci
+```
+3. Configure your environment
+
+See [Environment Variables](#environment-variables).
+
+4. Run application
+
+```bash
+npm run dev
+```
 
 ## Environment Variables
 
@@ -43,23 +54,14 @@ MongoDB is used to store chats and chat messages.
 - MONGODB_URL
 - MONGODB_DATABASE
 
-## How to Install
+## Technologies and Tools
 
-1. Start by cloning this repository:
+This application utilizes several features:
 
-```bash
-git clone git@github.com:gabrielsenadev/audioinsight.git
-```
-
-2. Install dependencies:
-
-```bash
-npm ci
-```
-3. Configure your environment
-
-4. Run application
-
-```bash
-npm run dev
-```
+- Next.js: Frontend React Application and API Application
+- Cloudflare AI: Interaction with Cloudflare AI Models
+- MongoDB: Database to store chats and messages
+- Netlify Blobs: To store audio files
+- Zod: User input API validation
+- Tabler Icons: Application icons
+- Wavesurfer: Audio wave visualization player
