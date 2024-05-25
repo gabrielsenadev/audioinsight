@@ -1,29 +1,23 @@
-import { Store, getStore } from '@netlify/blobs';
 import { CreateChatInput, GetChatInput } from '../types/dto';
-import { Chat } from '../types/data';
+import { Collection } from 'mongodb';
+import { RepositoryProvider } from '.';
 
-/**
- * 
- * Criar estrutura de 3 repository => 1. chat, audio e messages
- * Criar estrutura desses 3 repository receberem um database provider, que será uma interface para um provider
- * Criar um database provider, ex: mongodb atlas, onde nele terá as funções de salvar os 3 tipos de repositories e recuperar também.
- */
+type ChatDocument = {
+  id: string;
+  title: string;
+  content: string;
+  vtt: string;
+  createdAt: Date;
+}
 
 export class ChatsRepository {
 
   private static instance: ChatsRepository;
-  private store: Store;
+  private collection: Collection<ChatDocument>;
 
   private constructor() {
     ChatsRepository.instance = this;
-
-    this.store = getStore({
-      name: 'chats',
-      siteID: process.env.NETLIFY_SITE_ID,
-      token: process.env.NETLIFY_TOKEN,
-      consistency: 'strong',
-      fetch: fetch,
-    });
+    this.collection = RepositoryProvider.getInstance().getDB().collection<ChatDocument>('chats');
   }
 
   public static getInstance() {
@@ -35,15 +29,32 @@ export class ChatsRepository {
   }
 
   public async createChat({ content, id, title, vtt }: CreateChatInput) {
-    await this.store.setJSON(id, {
+    const response = await this.collection.insertOne({
+      id,
       content,
       title,
       vtt,
+      createdAt: new Date(),
     });
 
+    return response.insertedId;
   }
 
   public async getChat({ id }: GetChatInput) {
-    return await this.store.get(id, { type: 'json' }) as Chat;
+    const chat = await this.collection.findOne({
+      id,
+    });
+
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+
+    const { title, vtt, content } = chat;
+
+    return {
+      title,
+      vtt,
+      content
+    };
   }
 }

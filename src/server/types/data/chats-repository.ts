@@ -9,5 +9,5 @@ export type Chat = {
 export type ChatMessage = {
   content: string;
   role: MessageRole;
-  timeStamp: number;
+  createdAt: Date;
 }

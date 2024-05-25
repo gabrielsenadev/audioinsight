@@ -1,13 +1,10 @@
-import { ChatsService } from "@/server/services/ChatsService";
-import audioSchema from "@/server/validators/audio-schema";
-import messageSchema from "@/server/validators/message-schema";
+import { ChatsService } from "../../../../../server/services/ChatsService";
+import messageSchema from "../../../../../server/validators/message-schema";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
   chatId: string;
 };
-
-export const runtime = 'edge';
 
 export async function POST(request: NextRequest, { params: { chatId }}: { params: Params }) {
   try {

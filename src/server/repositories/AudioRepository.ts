@@ -1,5 +1,5 @@
-import { Store, getStore } from '@netlify/blobs';
 import { CreateChatAudioInput, GetChatInput } from '../types/dto';
+import { Store, getStore } from '@netlify/blobs';
 
 export class AudioRepository {
 
@@ -13,8 +13,6 @@ export class AudioRepository {
       name: 'audio',
       siteID: process.env.NETLIFY_SITE_ID,
       token: process.env.NETLIFY_TOKEN,
-      consistency: 'strong',
-      fetch: fetch,
     });
   }
 
@@ -26,12 +24,18 @@ export class AudioRepository {
     return AudioRepository.instance;
   }
 
-  public async createAudio({ id, audio }: CreateChatAudioInput) {
-    await this.store.set(id, audio);
+  public async createAudio({ id: chatId, audio }: CreateChatAudioInput) {
+    return this.store.set(chatId, audio);
   }
 
-  public getAudio({ id }: GetChatInput) {
-    return this.store.get(id, { type: 'blob' });
+  public async getAudio({ id }: GetChatInput) {
+    const response = await this.store.get(id, { type: 'blob' });
+    
+    if (!response) {
+      throw new Error('Chat audio not found.');
+    }
+
+    return response;
   }
 
 }

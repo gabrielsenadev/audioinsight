@@ -1,4 +1,4 @@
-import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "@/server/types/provider";
+import { TextGenerationExecutorOptions, TextGenerationMessageInput, TextGenerationResponse, TextGenerationStreamResponse } from "../../../../types/provider";
 import { TextGenerationProviderImpl } from "../TextGenerationProviderImpl";
 
 export class CloudflareMetaLlma38b extends TextGenerationProviderImpl {

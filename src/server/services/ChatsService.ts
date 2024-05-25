@@ -1,4 +1,4 @@
-import { ChatsRepository } from "@/server/repositories/ChatsRepository";
+import { ChatsRepository } from "../repositories/ChatsRepository";
 import AIService from "./AIService";
 import { CreateChatInput } from "../types/dto/chats-service";
 import { MessageRole } from "../types/shared";
@@ -88,7 +88,7 @@ export class ChatsService {
       throw new Error('Chat not found');
     }
 
-    const messagesHistory = await this.messageRepository.getChatMessages({ id: chatId });
+    const messagesHistory = (await this.messageRepository.getChatMessages({ id: chatId })).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 3);
 
     const messages = [
       {
@@ -96,12 +96,12 @@ export class ChatsService {
         role: 'system',
       },
       {
-        content: `Context: ${chat.content}`,
-        role: 'system',
+        content: `Context:${chat.vtt}`,
+        role: 'assistant',
       },
       {
-        content: `VTT: ${chat.vtt}`,
-        role: 'system',
+        content: `VTT:${chat.vtt}`,
+        role: 'assistant',
       },
       ...messagesHistory.map(message => ({ role: message.role, content: message.content })),
       {

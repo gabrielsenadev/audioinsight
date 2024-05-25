@@ -1,6 +1,5 @@
+import { IconUser, IconWaveSawTool } from "@tabler/icons-react";
 import { useEffect, useRef } from "react";
-import { PiWaveformBold } from "react-icons/pi";
-import { TbUserCircle } from "react-icons/tb";
 
 interface UserMessageProps {
   isAssistant: boolean;
@@ -12,14 +11,14 @@ export function UserMessage({
   messages
 }: UserMessageProps) {
 
-  const icon = isAssistant ? <PiWaveformBold /> : <TbUserCircle />;
+  const icon = isAssistant ? <IconWaveSawTool /> : <IconUser />;
   const name = isAssistant ? 'Assistant' : 'You';
 
   const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     divRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, []);
+  }, [messages]);
 
   return (
     <div className="flex flex-col" ref={divRef}>

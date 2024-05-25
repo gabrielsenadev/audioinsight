@@ -1,4 +1,4 @@
-import { ContentSummaryResponse } from "@/server/types/provider";
+import { ContentSummaryResponse } from "../../../../types/provider";
 import { ContentSummaryProviderImpl } from "../ContentSummaryProviderImpl";
 
 export class CloudflareBartLarge extends ContentSummaryProviderImpl {
