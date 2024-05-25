@@ -1,36 +1,45 @@
-![audio insight screenshot](./docs/audioinsight-screenshot.png)
-# AudioInsight - Cloudflare AI Challenge Entry
+![Audio Insight Running Example](./docs/audioinsight-example.gif)
 
-AudioInsight processes audio, transcribes it, summarizes it, generates a title for the content, and allows users to ask questions about the related audio.
+# AudioInsight
 
-This is an entry for the [Cloudflare AI Challenge](https://dev.to/challenges/cloudflare).
+AudioInsight is a full-stack application that processes audio, generates transcriptions, and allows users to ask questions about the related audio.
 
-Live on: [https://audioinsight.gabrielsena.dev/](https://audioinsight.gabrielsena.dev/)
+## Technologies and Tools
 
-- [How It Works](#how-it-works)
-  - [Under the Hood](#under-the-hood)
-  - [Additional Features](#additional-features)
-- [How to Install](#how-to-install)
-- [Audio Examples](#audio-examples)
-- [Screenshots](#screenshots)
+This application utilizes several features:
 
-## How It Works
+- Next.js: Frontend React Application and API Application
+- Cloudflare AI: Interaction with Cloudflare AI Models
+- MongoDB: Database to store chats and messages
+- Netlify Blobs: To store audio files
+- Zod: User input API validation
+- Tabler Icons: Application icons
+- Wavesurfer: Audio wave visualization player
 
-1. On the application's homepage, the user uploads an audio file.
-2. We use the [whisper model](https://developers.cloudflare.com/workers-ai/models/whisper/) to transcribe the audio into text.
-3. We use the [neural-chat-7b-v3-1-awq model](https://developers.cloudflare.com/workers-ai/models/neural-chat-7b-v3-1-awq/) to generate a title based on the provided content.
-4. We summarize the content with the [bart-large-cnn model](https://developers.cloudflare.com/workers-ai/models/bart-large-cnn/).
-5. After that, the user can ask questions, and we use the [neural-chat-7b-v3-1-awq model](https://developers.cloudflare.com/workers-ai/models/neural-chat-7b-v3-1-awq/) to answer the user's questions.
+## Environment Variables
 
-### Under the Hood
+This application depends on some providers to work with ai and database. It has been developed with minimal provider dependency. So, if you prefer a different provider, you can easily switch.
 
-- [D1 Database](https://developers.cloudflare.com/d1/) is responsible for storing chat and its history.
-- The [Cloudflare R2](https://developers.cloudflare.com/r2/) is responsible for storing chat's audio files.
-- [Cloudflare Pages](https://developers.cloudflare.com/pages/) is responsible for hosting the entire [NextJS](https://nextjs.org/) application, which provides a front-end and back-end ecosystem.
+### Cloudflare AI:
 
-### Additional Features
+This application integrates with the Cloudflare AI ecosystem to utilize AI Models.
 
-- Preserve conversation: Your chat and audio are stored remotely. You can continue talking about the audio later.
+- CLOUDFLARE_ACCOUNT_ID
+- CLOUDFLARE_API_TOKEN
+
+### Netlify Blobs:
+
+For storing audio data, this application relies on Netlify Blobs. You will need a Netlify Site and Account.
+
+- NETLIFY_SITE_ID
+- NETLIFY_TOKEN
+
+### MongoDB:
+
+MongoDB is used to store chats and chat messages.
+
+- MONGODB_URL
+- MONGODB_DATABASE
 
 ## How to Install
 
@@ -45,59 +54,10 @@ git clone git@github.com:gabrielsenadev/audioinsight.git
 ```bash
 npm ci
 ```
+3. Configure your environment
 
-3. Create D1 Database:
-
-```bash
-npx wrangler d1 create db-d1-audioinsight
-```
-
-4. Configure your database:
+4. Run application
 
 ```bash
-npx wrangler d1 execute db-d1-audioinsight --remote --file=./src/database/schema.sql
+npm run dev
 ```
-
-5. Create your R2 bucket:
-
-```bash
-npx wrangler r2 bucket create r2-audios
-```
-
-6. Update wrangler.toml to target your recently created database and bucket properly:
-
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "db-d1-audioinsight"
-database_id = "d485c019-8021-4d08-88e6-e5a6ea66ad4e"
-
-[[r2_buckets]]
-binding = 'R2'
-bucket_name = 'r2-audios'
-```
-
-7. Run preview:
-
-```bash
-npm run preview
-```
-
-8. Deploy the application:
-
-
-```bash
-npm run deploy
-```
-
-## Audio Examples
-
-In the [examples/](/examples/) directory, there are some useful audios to try this application.
-
-## Screenshots
-
-### Homepage
-![homepage](./docs/homepage.png)
-
-### Chat
-![homepage](./docs/chat.png)
