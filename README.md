@@ -56,8 +56,6 @@ MongoDB is used to store chats and chat messages.
 
 ## Technologies and Tools
 
-This application utilizes several features:
-
 - Next.js: Frontend React Application and API Application
 - Cloudflare AI: Interaction with Cloudflare AI Models
 - MongoDB: Database to store chats and messages
