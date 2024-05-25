@@ -1,4 +1,6 @@
-![Audio Insight Running Example](./docs/audioinsight-example.gif)
+<p align="center">
+  <img src="./docs/audioinsight-example.gif" alt="Audio Insight Running Exampl" />
+</p>
 
 # AudioInsight
 
