@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@netlify/blobs": "^7.3.0",
+    "@tabler/icons-react": "^3.5.0",
     "@wavesurfer/react": "^1.0.6",
     "next": "14.2.3",
     "react": "^18",
