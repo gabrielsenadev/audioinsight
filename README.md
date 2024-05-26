@@ -6,6 +6,8 @@
 
 AudioInsight is a full-stack application that processes audio, generates transcriptions, and allows users to ask questions about the related audio.
 
+Its creation was motivated by participation in a dev.to challenge.
+
 ## Table of Contents
 
 - [How to Install](#how-to-install)
