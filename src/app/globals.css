@@ -1,6 +1,49 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-dark: #111111;
+  --color-primary: #0466c8;
+
+  --animate-wave-normal: wave-normal 1s ease-in-out infinite;
+  --animate-wave-loud: wave-loud 1.2s ease-in-out infinite;
+  --animate-wave-quiet: wave-quiet 1.1s ease-in-out infinite;
+}
+
+@keyframes wave-normal {
+  25% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.4);
+  }
+  75% {
+    transform: scaleY(0.6);
+  }
+}
+
+@keyframes wave-loud {
+  25% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.8);
+  }
+  75% {
+    transform: scaleY(0.6);
+  }
+}
+
+@keyframes wave-quiet {
+  25% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.2);
+  }
+  75% {
+    transform: scaleY(0.4);
+  }
+}
 
 html, body {
   height: 100%;
